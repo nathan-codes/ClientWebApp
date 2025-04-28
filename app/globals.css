@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 180 33% 98%;
+    --foreground: 175 84% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 175 84% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 175 84% 12%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 175 84% 32%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 160 33% 96%;
+    --muted-foreground: 175 10% 40%;
+
+    --accent: 160 40% 94%;
+    --accent-foreground: 175 60% 20%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 30 95% 60%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 160 20% 90%;
+    --input: 160 20% 90%;
+    --ring: 160 84% 39%;
+
+    --sidebar: 160 33% 96%;
+    --sidebar-foreground: 175 84% 12%;
+    --sidebar-border: 160 20% 90%;
+    --sidebar-accent: 160 84% 39%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-ring: 160 84% 39%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 175 60% 10%;
+    --foreground: 160 33% 96%;
+
+    --card: 175 60% 10%;
+    --card-foreground: 160 33% 96%;
+
+    --popover: 175 60% 10%;
+    --popover-foreground: 160 33% 96%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 175 84% 32%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 175 30% 20%;
+    --muted-foreground: 160 20% 80%;
+
+    --accent: 175 30% 20%;
+    --accent-foreground: 160 33% 96%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 160 70% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 30 90% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 175 30% 20%;
+    --input: 175 30% 20%;
+    --ring: 160 84% 39%;
+
+    --sidebar: 175 60% 10%;
+    --sidebar-foreground: 160 33% 96%;
+    --sidebar-border: 175 30% 20%;
+    --sidebar-accent: 160 84% 39%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-ring: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.zone-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.zone-marker:hover {
+  transform: scale(1.1);
+}
+
+.zone-marker.critical {
+  background-color: hsl(var(--destructive));
+}
+
+.zone-marker.warning {
+  background-color: hsl(var(--warning));
+}
+
+.zone-marker.normal {
+  background-color: hsl(var(--success));
+}
+
+.zone-marker.inactive {
+  background-color: hsl(var(--muted-foreground));
+}
+
+.dashboard-card {
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.data-table-container {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.chart-container {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-item {
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background-color: hsl(var(--accent));
+}
+
+.sidebar-item.active {
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+
+.message-bubble {
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  max-width: 80%;
+  margin-bottom: 0.5rem;
+}
+
+.message-bubble.sent {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  margin-left: auto;
+  border-bottom-right-radius: 0;
+}
+
+.message-bubble.received {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  margin-right: auto;
+  border-bottom-left-radius: 0;
+}
+
+.notification-item {
+  transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: hsl(var(--accent));
+}
+
+.notification-item.unread {
+  border-left: 3px solid hsl(var(--primary));
+}
+
+.notification-item.critical {
+  border-left: 3px solid hsl(var(--destructive));
+}
+
+.notification-item.warning {
+  border-left: 3px solid hsl(var(--warning));
+}
+
+.notification-item.success {
+  border-left: 3px solid hsl(var(--success));
+}
