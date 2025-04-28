@@ -243,46 +243,84 @@ const MapView = () => {
     }
   };
 
-  const getZoneFillColor = (zoneId: string) => {
+  const getZoneLevel = (zone: (typeof zones)[0], metric: string) => {
+    switch (metric) {
+      case "refill-requests":
+        if (zone.stats.refillRequests >= 20) return "high";
+        if (zone.stats.refillRequests >= 10) return "medium";
+        if (zone.stats.refillRequests > 0) return "low";
+        return "none";
+
+      case "time-to-depletion":
+        const days = parseFloat(zone.stats.avgTimeToDepletion.split(" ")[0]);
+        if (days <= 2) return "high";
+        if (days <= 4) return "medium";
+        return "low";
+
+      case "request-alert-ratio":
+        const ratio = zone.stats.refillRequests / zone.stats.activeUnits;
+        if (ratio >= 0.2) return "high";
+        if (ratio >= 0.1) return "medium";
+        if (ratio > 0) return "low";
+        return "none";
+
+      default:
+        return "none";
+    }
+  };
+
+  const getZoneFillColor = (zoneId: string, metric: string) => {
     const zone = zones.find((z) => z.id === zoneId);
     if (!zone) return "#F5F5F5";
 
+    const level = getZoneLevel(zone, metric);
+
     // If zone is selected, use a highlighted version
     if (selectedZone === zoneId) {
-      return zone.level === "high"
+      return level === "high"
         ? "#FFDDDD"
-        : zone.level === "medium"
+        : level === "medium"
         ? "#FFF2DD"
-        : "#D7F0E5";
+        : level === "low"
+        ? "#D7F0E5"
+        : "#F5F5F5";
     }
 
     // Default colors based on zone level
-    return zone.level === "high"
+    return level === "high"
       ? "#FFF0F0"
-      : zone.level === "medium"
+      : level === "medium"
       ? "#FFFBF0"
-      : "#E8F6F1";
+      : level === "low"
+      ? "#E8F6F1"
+      : "#F5F5F5";
   };
 
-  const getZoneStrokeColor = (zoneId: string) => {
+  const getZoneStrokeColor = (zoneId: string, metric: string) => {
     const zone = zones.find((z) => z.id === zoneId);
     if (!zone) return "#D0D0D0";
 
+    const level = getZoneLevel(zone, metric);
+
     // If zone is selected, use a highlighted version
     if (selectedZone === zoneId) {
-      return zone.level === "high"
+      return level === "high"
         ? "#FF6666"
-        : zone.level === "medium"
+        : level === "medium"
         ? "#FFCC66"
-        : "#4BD3A4";
+        : level === "low"
+        ? "#4BD3A4"
+        : "#D0D0D0";
     }
 
     // Default colors based on zone level
-    return zone.level === "high"
+    return level === "high"
       ? "#FFB0B0"
-      : zone.level === "medium"
+      : level === "medium"
       ? "#FFE0B0"
-      : "#A5E1D1";
+      : level === "low"
+      ? "#A5E1D1"
+      : "#D0D0D0";
   };
 
   return (
@@ -418,8 +456,8 @@ const MapView = () => {
                 {/* Adenta zone */}
                 <path
                   d="M520,340 C520,340 540,330 550,340 C560,350 555,365 545,370 C535,375 525,365 520,355 C515,345 520,340 520,340 Z"
-                  fill={getZoneFillColor("adenta")}
-                  stroke={getZoneStrokeColor("adenta")}
+                  fill={getZoneFillColor("adenta", activeMetric)}
+                  stroke={getZoneStrokeColor("adenta", activeMetric)}
                   strokeWidth={selectedZone === "adenta" ? "2" : "1"}
                   opacity={selectedZone === "adenta" ? "0.9" : "0.7"}
                 />
@@ -427,8 +465,8 @@ const MapView = () => {
                 {/* East Legon zone */}
                 <path
                   d="M470,350 C470,350 485,345 495,350 C505,355 510,365 505,370 C500,375 485,375 475,365 C465,355 470,350 470,350 Z"
-                  fill={getZoneFillColor("east-legon")}
-                  stroke={getZoneStrokeColor("east-legon")}
+                  fill={getZoneFillColor("east-legon", activeMetric)}
+                  stroke={getZoneStrokeColor("east-legon", activeMetric)}
                   strokeWidth={selectedZone === "east-legon" ? "2" : "1"}
                   opacity={selectedZone === "east-legon" ? "0.9" : "0.7"}
                 />
@@ -436,8 +474,11 @@ const MapView = () => {
                 {/* Airport Residential zone */}
                 <path
                   d="M440,355 C440,355 450,350 460,355 C470,360 470,370 460,375 C450,380 440,375 435,370 C430,365 440,355 440,355 Z"
-                  fill={getZoneFillColor("airport-residential")}
-                  stroke={getZoneStrokeColor("airport-residential")}
+                  fill={getZoneFillColor("airport-residential", activeMetric)}
+                  stroke={getZoneStrokeColor(
+                    "airport-residential",
+                    activeMetric
+                  )}
                   strokeWidth={
                     selectedZone === "airport-residential" ? "2" : "1"
                   }
@@ -449,8 +490,8 @@ const MapView = () => {
                 {/* Cantonments zone */}
                 <path
                   d="M410,375 C410,375 425,370 435,380 C445,390 440,400 430,405 C420,410 405,400 405,390 C405,380 410,375 410,375 Z"
-                  fill={getZoneFillColor("cantonments")}
-                  stroke={getZoneStrokeColor("cantonments")}
+                  fill={getZoneFillColor("cantonments", activeMetric)}
+                  stroke={getZoneStrokeColor("cantonments", activeMetric)}
                   strokeWidth={selectedZone === "cantonments" ? "2" : "1"}
                   opacity={selectedZone === "cantonments" ? "0.9" : "0.7"}
                 />
@@ -458,8 +499,8 @@ const MapView = () => {
                 {/* Osu zone */}
                 <path
                   d="M380,385 C380,385 395,380 405,390 C415,400 410,410 400,415 C390,420 375,410 375,400 C375,390 380,385 380,385 Z"
-                  fill={getZoneFillColor("osu")}
-                  stroke={getZoneStrokeColor("osu")}
+                  fill={getZoneFillColor("osu", activeMetric)}
+                  stroke={getZoneStrokeColor("osu", activeMetric)}
                   strokeWidth={selectedZone === "osu" ? "2" : "1"}
                   opacity={selectedZone === "osu" ? "0.9" : "0.7"}
                 />
@@ -467,8 +508,8 @@ const MapView = () => {
                 {/* Labadi zone */}
                 <path
                   d="M350,390 C350,390 365,385 375,395 C385,405 380,415 370,420 C360,425 345,415 345,405 C345,395 350,390 350,390 Z"
-                  fill={getZoneFillColor("labadi")}
-                  stroke={getZoneStrokeColor("labadi")}
+                  fill={getZoneFillColor("labadi", activeMetric)}
+                  stroke={getZoneStrokeColor("labadi", activeMetric)}
                   strokeWidth={selectedZone === "labadi" ? "2" : "1"}
                   opacity={selectedZone === "labadi" ? "0.9" : "0.7"}
                 />
@@ -476,8 +517,8 @@ const MapView = () => {
                 {/* Tema zone */}
                 <path
                   d="M540,385 C540,385 555,380 565,385 C575,390 580,400 570,410 C560,420 545,415 535,405 C525,395 540,385 540,385 Z"
-                  fill={getZoneFillColor("tema")}
-                  stroke={getZoneStrokeColor("tema")}
+                  fill={getZoneFillColor("tema", activeMetric)}
+                  stroke={getZoneStrokeColor("tema", activeMetric)}
                   strokeWidth={selectedZone === "tema" ? "2" : "1"}
                   opacity={selectedZone === "tema" ? "0.9" : "0.7"}
                 />
@@ -672,7 +713,7 @@ const MapView = () => {
                   <DialogTrigger asChild>
                     <div className="group relative">
                       {/* Animated pulse effect for high request zones */}
-                      {zone.level === "high" && (
+                      {getZoneLevel(zone, activeMetric) === "high" && (
                         <div className="absolute inset-0 rounded-xl animate-ping bg-red-500 opacity-25 -z-10"></div>
                       )}
 
@@ -680,7 +721,7 @@ const MapView = () => {
                       <Button
                         className={cn(
                           "p-4 rounded-xl text-white font-medium transition-all shadow-md group-hover:shadow-lg group-hover:translate-y-[-2px]",
-                          getZoneColor(zone.level)
+                          getZoneColor(getZoneLevel(zone, activeMetric))
                         )}
                         style={{
                           minWidth: "120px",
@@ -691,7 +732,15 @@ const MapView = () => {
                         <div>
                           {zone.name}
                           <div className="text-xs font-normal text-white/80 mt-1">
-                            {zone.stats.refillRequests} requests
+                            {activeMetric === "refill-requests" &&
+                              `${zone.stats.refillRequests} requests`}
+                            {activeMetric === "time-to-depletion" &&
+                              zone.stats.avgTimeToDepletion}
+                            {activeMetric === "request-alert-ratio" &&
+                              `${(
+                                zone.stats.refillRequests /
+                                zone.stats.activeUnits
+                              ).toFixed(2)} ratio`}
                           </div>
                         </div>
                       </Button>
@@ -715,29 +764,34 @@ const MapView = () => {
                         <div
                           className={cn(
                             "p-3 rounded-xl",
-                            zone.level === "high"
+                            getZoneLevel(zone, activeMetric) === "high"
                               ? "bg-red-50"
-                              : zone.level === "medium"
+                              : getZoneLevel(zone, activeMetric) === "medium"
                               ? "bg-amber-50"
                               : "bg-emerald-50"
                           )}
                         >
                           <div className="text-sm text-muted-foreground">
-                            Refill Requests
+                            {activeMetric === "refill-requests" &&
+                              "Refill Requests"}
+                            {activeMetric === "time-to-depletion" &&
+                              "Time to Depletion"}
+                            {activeMetric === "request-alert-ratio" &&
+                              "Request-Alert Ratio"}
                           </div>
                           <div className="text-xl font-semibold">
-                            {zone.stats.refillRequests}
+                            {activeMetric === "refill-requests" &&
+                              zone.stats.refillRequests}
+                            {activeMetric === "time-to-depletion" &&
+                              zone.stats.avgTimeToDepletion}
+                            {activeMetric === "request-alert-ratio" &&
+                              (
+                                zone.stats.refillRequests /
+                                zone.stats.activeUnits
+                              ).toFixed(2)}
                           </div>
                         </div>
                         <div className="bg-slate-50 p-3 rounded-xl">
-                          <div className="text-sm text-muted-foreground">
-                            Avg. Time to Depletion
-                          </div>
-                          <div className="text-xl font-semibold">
-                            {zone.stats.avgTimeToDepletion}
-                          </div>
-                        </div>
-                        <div className="bg-slate-50 p-3 rounded-xl col-span-2">
                           <div className="text-sm text-muted-foreground">
                             Active Units
                           </div>
@@ -774,25 +828,82 @@ const MapView = () => {
             {/* Legend */}
             <div className="absolute top-4 right-4 bg-white p-4 rounded-xl shadow-md border z-20">
               <h3 className="font-medium mb-3 text-teal-900">
-                Refill Requests
+                {activeMetric === "refill-requests" && "Refill Requests"}
+                {activeMetric === "time-to-depletion" && "Time to Depletion"}
+                {activeMetric === "request-alert-ratio" &&
+                  "Request-Alert Ratio"}
               </h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-500 rounded"></div>
-                  <span className="text-sm text-gray-700">High (20+)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-amber-500 rounded"></div>
-                  <span className="text-sm text-gray-700">Medium (10-19)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-emerald-500 rounded"></div>
-                  <span className="text-sm text-gray-700">Low (1-9)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border border-gray-300 bg-white rounded"></div>
-                  <span className="text-sm text-gray-700">None (0)</span>
-                </div>
+                {activeMetric === "refill-requests" && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-red-500 rounded"></div>
+                      <span className="text-sm text-gray-700">High (20+)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-amber-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        Medium (10-19)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-emerald-500 rounded"></div>
+                      <span className="text-sm text-gray-700">Low (1-9)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border border-gray-300 bg-white rounded"></div>
+                      <span className="text-sm text-gray-700">None (0)</span>
+                    </div>
+                  </>
+                )}
+                {activeMetric === "time-to-depletion" && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-red-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        High (≤ 2 days)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-amber-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        Medium (2-4 days)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-emerald-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        Low ({">"} 4 days)
+                      </span>
+                    </div>
+                  </>
+                )}
+                {activeMetric === "request-alert-ratio" && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-red-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        High (≥ 0.2)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-amber-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        Medium (0.1-0.19)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-emerald-500 rounded"></div>
+                      <span className="text-sm text-gray-700">
+                        Low ({"<"} 0.1)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border border-gray-300 bg-white rounded"></div>
+                      <span className="text-sm text-gray-700">None (0)</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
