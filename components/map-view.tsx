@@ -48,7 +48,7 @@ const zones = [
     name: "Adenta",
     level: "high",
     coordinates: { lat: 5.7019, lng: -0.1548 },
-    position: { top: "30%", left: "75%" },
+    position: { top: "25%", left: "65%" },
     stats: {
       refillRequests: 27,
       avgTimeToDepletion: "2.8 days",
@@ -60,7 +60,7 @@ const zones = [
     name: "East Legon",
     level: "medium",
     coordinates: { lat: 5.6364, lng: -0.1633 },
-    position: { top: "35%", left: "65%" },
+    position: { top: "35%", left: "55%" },
     stats: {
       refillRequests: 17,
       avgTimeToDepletion: "3.4 days",
@@ -72,7 +72,7 @@ const zones = [
     name: "Airport Residential",
     level: "high",
     coordinates: { lat: 5.6056, lng: -0.1819 },
-    position: { top: "40%", left: "45%" },
+    position: { top: "45%", left: "45%" },
     stats: {
       refillRequests: 24,
       avgTimeToDepletion: "2.5 days",
@@ -84,7 +84,7 @@ const zones = [
     name: "Cantonments",
     level: "medium",
     coordinates: { lat: 5.5881, lng: -0.1763 },
-    position: { top: "45%", left: "35%" },
+    position: { top: "55%", left: "35%" },
     stats: {
       refillRequests: 15,
       avgTimeToDepletion: "3.7 days",
@@ -96,7 +96,7 @@ const zones = [
     name: "Osu",
     level: "medium",
     coordinates: { lat: 5.5565, lng: -0.1743 },
-    position: { top: "50%", left: "45%" },
+    position: { top: "65%", left: "45%" },
     stats: {
       refillRequests: 14,
       avgTimeToDepletion: "4.1 days",
@@ -108,7 +108,7 @@ const zones = [
     name: "Labadi",
     level: "low",
     coordinates: { lat: 5.5629, lng: -0.1494 },
-    position: { top: "55%", left: "55%" },
+    position: { top: "70%", left: "55%" },
     stats: {
       refillRequests: 8,
       avgTimeToDepletion: "5.2 days",
@@ -120,7 +120,7 @@ const zones = [
     name: "Tema",
     level: "low",
     coordinates: { lat: 5.6698, lng: -0.0167 },
-    position: { top: "25%", left: "85%" },
+    position: { top: "40%", left: "85%" },
     stats: {
       refillRequests: 6,
       avgTimeToDepletion: "6.1 days",
@@ -671,39 +671,8 @@ const MapView = () => {
                 key={zone.id}
                 className="absolute"
                 style={{
-                  // Set positions based on SVG coordinates
-                  top:
-                    zone.id === "adenta"
-                      ? "35%"
-                      : zone.id === "east-legon"
-                      ? "45%"
-                      : zone.id === "airport-residential"
-                      ? "48%"
-                      : zone.id === "cantonments"
-                      ? "55%"
-                      : zone.id === "osu"
-                      ? "60%"
-                      : zone.id === "labadi"
-                      ? "63%"
-                      : zone.id === "tema"
-                      ? "53%"
-                      : "50%",
-                  left:
-                    zone.id === "adenta"
-                      ? "65%"
-                      : zone.id === "east-legon"
-                      ? "57%"
-                      : zone.id === "airport-residential"
-                      ? "48%"
-                      : zone.id === "cantonments"
-                      ? "44%"
-                      : zone.id === "osu"
-                      ? "38%"
-                      : zone.id === "labadi"
-                      ? "34%"
-                      : zone.id === "tema"
-                      ? "72%"
-                      : "40%",
+                  top: zone.position.top,
+                  left: zone.position.left,
                   transform: `scale(${zoomLevel})`,
                   transition: "transform 0.3s ease",
                   zIndex: 10,
